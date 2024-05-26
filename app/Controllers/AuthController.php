@@ -16,4 +16,9 @@ class AuthController extends BaseController
         ];
         return view('backend/pages/auth/login', $data);
     }
+
+    public function loginHandler()
+    {
+        echo 'login handler process...';
+    }
 }
