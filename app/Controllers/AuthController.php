@@ -4,6 +4,9 @@ namespace App\Controllers;
 
 use App\Controllers\BaseController;
 use CodeIgniter\HTTP\ResponseInterface;
+use App\Libraries\CIAuth;
+use App\Libraries\Hash;
+use App\Models\User;
 
 class AuthController extends BaseController
 {
@@ -19,6 +22,8 @@ class AuthController extends BaseController
 
     public function loginHandler()
     {
-        echo 'login handler process...';
+        $fieldType = filter_var($this->request->getVar('login_id'), FILTER_VALIDATE_EMAIL) ? 'email' :  'username';
+
+        echo $fieldType;
     }
 }
