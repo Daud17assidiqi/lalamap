@@ -24,6 +24,55 @@ class AuthController extends BaseController
     {
         $fieldType = filter_var($this->request->getVar('login_id'), FILTER_VALIDATE_EMAIL) ? 'email' :  'username';
 
-        echo $fieldType;
+        if ($fieldType == 'email') {
+            $isValid = $this->validate([
+                'login_id' => [
+                    'rules' => 'required|valid_email|is_not_unique[users.email]',
+                    'errors' => [
+                        'required' => 'Email is required',
+                        'valid_email' => 'Email is not valid',
+                        'is_not_unique' => 'Email is not registered'
+                    ]
+                ],
+                'password' => [
+                    'rules' => 'required',
+                    'errors' => [
+                        'min_length' => 'password must have atleast 5 characters in length',
+                        'max_length' => 'password must not have characters more than 45 in length'
+                    ]
+                ]
+            ]);
+        } else {
+            $isValid = $this->validate([
+                'login_id' => [
+                    'rules' => 'required|is_not_unique[users.username]',
+                    'errors' => [
+                        'required' => 'Username is required',
+                        'is_not_unique' => 'Username is not registered'
+                    ]
+                ],
+                'password' => [
+                    'rules' => 'required',
+                    'errors' => [
+                        'min_length' => 'password must have atleast 5 characters in length',
+                        'max_length' => 'password must not have characters more than 45 in length'
+                    ]
+                ]
+            ]);
+        }
+        if (!$isValid) {
+            return view('backend/pages/auth/login', [
+                'pageTitle' => 'Login',
+                'validation' => $this->validator
+            ]);
+        } else {
+            $user = new User();
+            $userInfo = $user->where($fieldType, $this->request->getVar('login_id'))->first();
+            $check_password = Hash::check($this->request->getVar('password'), $userInfo['password']);
+
+            if (!$check_password) {
+                return redirect()->route('admin.login.form')->with('fail', 'Wrong password')->withInput();
+            }
+        }
     }
 }
