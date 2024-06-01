@@ -9,6 +9,9 @@ class AdminController extends BaseController
 {
     public function index()
     {
-        echo 'Admin dashboard home';
+        $data = [
+            'pageTitle' => 'Dashboard',
+        ];
+        return view('backend/pages/home', $data);
     }
 }

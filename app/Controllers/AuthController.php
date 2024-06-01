@@ -72,6 +72,9 @@ class AuthController extends BaseController
 
             if (!$check_password) {
                 return redirect()->route('admin.login.form')->with('fail', 'Wrong password')->withInput();
+            } else {
+                CIAuth::setCIAuth($userInfo);
+                return redirect()->route('admin.home');
             }
         }
     }
