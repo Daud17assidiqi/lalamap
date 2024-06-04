@@ -16,6 +16,12 @@
                 <button type="button" class="close" data-dismis="alert" aria-label="Close"> <span aria-hidden="true">&times;</span></button>
             </div>
         <?php endif; ?>
+        <div class="input-group custom">
+            <input type="text" class="form-control form-control-lg" placeholder="Email" name="email" value="<?= set_value('email') ?>">
+            <div class="input-group-append custom">
+                <span class="input-group-text"><i class="fa fa-envelope-o" aria-hidden="true"></i></span>
+            </div>
+        </div>
         <?php if (!empty(session()->getFlashdata('fail'))) : ?>
             <div class="alert alert-danger">
                 <?= session()->getFlashdata('fail'); ?>
@@ -27,12 +33,7 @@
                 <?= $validation->getError('email'); ?>
             </div>
         <?php endif; ?>
-        <div class="input-group custom">
-            <input type="text" class="form-control form-control-lg" placeholder="Email" name="email" value="<?= set_value('email') ?>">
-            <div class="input-group-append custom">
-                <span class="input-group-text"><i class="fa fa-envelope-o" aria-hidden="true"></i></span>
-            </div>
-        </div>
+
         <div class="row align-items-center">
             <div class="col-5">
                 <div class="input-group mb-0">

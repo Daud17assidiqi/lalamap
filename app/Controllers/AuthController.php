@@ -7,10 +7,12 @@ use CodeIgniter\HTTP\ResponseInterface;
 use App\Libraries\CIAuth;
 use App\Libraries\Hash;
 use App\Models\User;
+use App\Models\PasswordResetToken;
+use Carbon\Carbon;
 
 class AuthController extends BaseController
 {
-    protected $helpers = ['url', 'form'];
+    protected $helpers = ['url', 'form', 'CIMail'];
     public function loginForm()
     {
         $data = [
@@ -89,6 +91,49 @@ class AuthController extends BaseController
 
     public function sendPasswordResetLink()
     {
-        echo 'Send password reset link';
+        $isValid = $this->validate([
+            'email' => [
+                'rules' => 'required|valid_email|is_not_unique[users.email]',
+                'errors' => [
+                    'required' => 'Email is required',
+                    'valid_email' => 'please check email field. It does not appears to be valid',
+                    'is_not_unique' => 'Email not exists in system',
+                ],
+            ]
+        ]);
+
+        if (!$isValid) {
+            # code...
+            return view('backend/pages/auth/forgot', [
+                'pageTitle' => 'Forgot password',
+                'validation' => $this->validator,
+            ]);
+        } else {
+            //Get user (admin) details
+            $user = new User();
+            $user_info = $user->asObject()->where('email', $this->request->getVar('email'))->first();
+
+
+            //generate token
+            $token = bin2hex(openssl_random_pseudo_bytes(65));
+
+            //get reset password token
+
+            $password_reset_token = new PasswordResetToken();
+            $isOldTokenExists = $password_reset_token->asObject()->where('email', $user_info->email)->first();
+
+            if ($isOldTokenExists) {
+                # update existing token
+                $password_reset_token->where('email', $user_info->email)
+                    ->set(['token' => $token, 'created_at' => Carbon::now()])
+                    ->update();
+            } else {
+                $password_reset_token->insert([
+                    'email' => $user_info->email,
+                    'token' => $token,
+                    'created_at' => Carbon::now()
+                ]);
+            }
+        }
     }
 }
