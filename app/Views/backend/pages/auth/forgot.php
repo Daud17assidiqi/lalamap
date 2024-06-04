@@ -33,8 +33,6 @@
                 <span class="input-group-text"><i class="fa fa-envelope-o" aria-hidden="true"></i></span>
             </div>
         </div>
-
-
         <div class="row align-items-center">
             <div class="col-5">
                 <div class="input-group mb-0">
